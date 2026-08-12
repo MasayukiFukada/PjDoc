@@ -22,10 +22,13 @@ PjDoc/
 │   │   ├── get_tree/           # 機能2: ドキュメントツリー構築 (tree.go, handler.go, tree_test.go)
 │   │   ├── render_document/    # 機能3: Markdown 取得 (document.go, handler.go, document_test.go)
 │   │   ├── search_documents/   # 機能4: 全文・ファイル名検索 (search.go, handler.go, search_test.go)
-│   │   └── watch_changes/      # 機能5: ホットリロード通知 (watcher.go, handler.go, watcher_test.go)
+│   │   ├── show_version/       # 機能5: バージョン情報保持・補完 (version.go, version_test.go)
+│   │   └── watch_changes/      # 機能6: ホットリロード通知 (watcher.go, handler.go, watcher_test.go)
 │   └── shared/                 # スライス間で共有する最小限の基盤機能
 │       └── web/                # embedded Webアセットおよび HTTP ルーティング初期化
 ├── scripts/
+│   ├── build.sh               # バージョン情報埋め込みバイナリ構築スクリプト
+│   ├── install.sh             # バージョン情報埋め込みバイナリインストールスクリプト
 │   └── test_coverage.sh       # テスト実行 & カバレッジHTMLレポート自動オープン
 └── web/                        # Web フロントエンドアセット (HTML/CSS/JS)
 ```
@@ -76,6 +79,22 @@ go run ./cmd/pjdoc -port 19000 -dir ./docs
 
 # 自前の PlantUML / Kroki ローカルサーバーを指定して起動
 go run ./cmd/pjdoc -plantuml-server http://localhost:8000
+```
+
+---
+
+### 📦 ビルド & インストールスクリプト
+
+Git タグ・コミットハッシュ・ビルド日時（ローカルタイムゾーン）を自動注入してバイナリを作成・配置するスクリプトを用意しています。
+
+```bash
+# 1. ローカルビルド (カレントディレクトリに ./pjdoc を生成)
+./scripts/build.sh           # 自動タグ/コミットハッシュ取得
+./scripts/build.sh v1.0.0     # バージョン手動指定
+
+# 2. インストール (GOPATH/GOBIN 配下に pjdoc を配置)
+./scripts/install.sh         # 自動タグ/コミットハッシュ取得
+./scripts/install.sh v1.0.0   # バージョン手動指定
 ```
 
 ---

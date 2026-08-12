@@ -28,10 +28,14 @@
 git clone https://github.com/MasayukiFukada/PjDoc.git
 cd PjDoc
 
-# バイナリのビルド
-go build -o pjdoc ./cmd/pjdoc
+# バージョン情報埋め込みビルド (推奨: カレントディレクトリに ./pjdoc を生成)
+./scripts/build.sh
 
-# PATH の通った場所へインストールする場合（任意）
+# バージョン情報埋め込みインストール (推奨: GOBIN/GOPATH に pjdoc をインストール)
+./scripts/install.sh
+
+# 手動で標準コマンドでビルド / インストールする場合
+go build -o pjdoc ./cmd/pjdoc
 go install ./cmd/pjdoc
 ```
 
@@ -42,7 +46,7 @@ go install ./cmd/pjdoc
 ```bash
 cd PjDoc
 git pull origin main
-go install ./cmd/pjdoc
+./scripts/install.sh
 ```
 
 リモートリポジトリから直接最新版に更新する場合：
@@ -61,6 +65,9 @@ go install github.com/MasayukiFukada/PjDoc/cmd/pjdoc@latest
 # カレントディレクトリの Markdown を閲覧（デフォルト: http://localhost:18080）
 pjdoc
 
+# バージョン情報の表示
+pjdoc -v
+
 # ポート番号やディレクトリを明示して実行
 pjdoc -port 9000 -dir /path/to/repository
 
@@ -76,6 +83,7 @@ pjdoc -plantuml-server http://localhost:8000
 | `-dir` | `.` | 閲覧対象のルートディレクトリ |
 | `-open` | `true` | 起動時にブラウザを自動で開く (`-open=false` で無効化) |
 | `-plantuml-server` | `https://kroki.io` | PlantUML / Kroki サーバーのエンドポイント URL |
+| `-version`, `-v` | `false` | バージョン情報（コミットハッシュ・ビルド日時）を表示して終了 |
 
 ---
 

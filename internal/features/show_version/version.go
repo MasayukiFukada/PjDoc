@@ -23,11 +23,17 @@ type Info struct {
 // GetInfo はバージョン情報を取得します。
 // ldflags による注入値がない場合は runtime/debug.ReadBuildInfo から補完を試みます。
 func GetInfo() Info {
-	v := Version
-	c := Commit
-	d := Date
+	buildInfo, _ := debug.ReadBuildInfo()
+	v, c, d := parseBuildInfo(buildInfo, Version, Commit, Date)
+	return Info{
+		Version: v,
+		Commit:  c,
+		Date:    d,
+	}
+}
 
-	if buildInfo, ok := debug.ReadBuildInfo(); ok {
+func parseBuildInfo(buildInfo *debug.BuildInfo, v, c, d string) (string, string, string) {
+	if buildInfo != nil {
 		if v == "dev" && buildInfo.Main.Version != "" && buildInfo.Main.Version != "(devel)" {
 			v = buildInfo.Main.Version
 		}
@@ -65,11 +71,7 @@ func GetInfo() Info {
 		}
 	}
 
-	return Info{
-		Version: v,
-		Commit:  c,
-		Date:    d,
-	}
+	return v, c, d
 }
 
 // String はバージョン情報を表示用の文字列に整形します。
