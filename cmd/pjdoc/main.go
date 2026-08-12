@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/MasayukiFukada/PjDoc/internal/features/show_version"
 	"github.com/MasayukiFukada/PjDoc/internal/features/watch_changes"
 	sharedweb "github.com/MasayukiFukada/PjDoc/internal/shared/web"
 )
@@ -22,7 +23,14 @@ func main() {
 	dir := flag.String("dir", ".", "Root directory to serve Markdown files from")
 	openBrowser := flag.Bool("open", true, "Automatically open browser")
 	plantumlServer := flag.String("plantuml-server", "https://kroki.io", "PlantUML / Kroki server URL endpoint for diagram rendering")
+	showVersion := flag.Bool("version", false, "Show version information")
+	showVersionShort := flag.Bool("v", false, "Show version information")
 	flag.Parse()
+
+	if *showVersion || *showVersionShort {
+		fmt.Println(show_version.GetInfo())
+		os.Exit(0)
+	}
 
 	absDir, err := filepath.Abs(*dir)
 	if err != nil {
@@ -54,6 +62,7 @@ func main() {
 
 	go func() {
 		url := fmt.Sprintf("http://localhost:%d", *port)
+		fmt.Printf("📌 %s\n", show_version.GetInfo())
 		fmt.Printf("🚀 PjDoc server starting on %s\n", url)
 		fmt.Printf("📂 Serving Markdown documents from: %s\n", absDir)
 
