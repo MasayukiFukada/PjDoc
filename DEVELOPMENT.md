@@ -39,19 +39,42 @@ PjDoc/
 ## 🛠️ ローカル開発手順
 
 ### 前提条件
-- Go 1.22 以上
-- (任意) [mise](https://mise.jdx.dev/)
+- [mise](https://mise.jdx.dev/) (推奨) または Go 1.22 以上
+
+### 🚀 開発環境のセットアップ (mise を使用する場合)
+
+本プロジェクトでは [`.mise.toml`](.mise.toml) を用意しており、`mise` を使用することで必要なツール（Go 等）のバージョンをワンコマンドで自動インストールできます。
+
+#### 1. mise のインストール（未導入の場合）
+```bash
+# macOS / Linux (その他のインストール方法は公式ドキュメントを参照)
+curl https://mise.run | sh
+```
+
+#### 2. 依存ツールの自動インストール
+リポジトリルートで以下を実行してください。
+
+```bash
+# リポジトリの設定を信頼して必要なツールをインストール
+mise trust
+mise install
+```
+
+---
 
 ### 開発サーバーの起動
 
 `go run` コマンドでローカル開発サーバーを即座に起動できます。
 
 ```bash
-# カレントディレクトリ対象で起動
+# カレントディレクトリ対象で起動 (デフォルトで PlantUML / Kroki API を使用)
 go run ./cmd/pjdoc
 
-# ポート番号やディレクトリを指定して起動
+# ポート番号や対象ディレクトリを指定して起動
 go run ./cmd/pjdoc -port 8080 -dir ./docs
+
+# 自前の PlantUML / Kroki ローカルサーバーを指定して起動
+go run ./cmd/pjdoc -plantuml-server http://localhost:8000
 ```
 
 ---

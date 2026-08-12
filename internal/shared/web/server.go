@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"net/http"
 
+	"github.com/MasayukiFukada/PjDoc/internal/features/get_config"
 	"github.com/MasayukiFukada/PjDoc/internal/features/get_tree"
 	"github.com/MasayukiFukada/PjDoc/internal/features/render_document"
 	"github.com/MasayukiFukada/PjDoc/internal/features/search_documents"
@@ -19,9 +20,10 @@ var EmbeddedAssets embed.FS
 
 // ServerConfig は Web サーバー構築の基本設定構造体です。
 type ServerConfig struct {
-	RootDir     string
-	Port        int
-	Broadcaster *watch_changes.Broadcaster
+	RootDir        string
+	Port           int
+	PlantUMLServer string
+	Broadcaster    *watch_changes.Broadcaster
 }
 
 // NewServer は各 Vertical Slice のハンドラーをルーティングした HTTP サーバーを組み立てます。
@@ -29,12 +31,16 @@ func NewServer(cfg ServerConfig, assetsFS embed.FS) (*http.ServeMux, error) {
 	mux := http.NewServeMux()
 
 	// 1. 各スライスのハンドラー初期化
+	configService := get_config.NewConfigService(cfg.PlantUMLServer)
+	configHandler := get_config.NewHandler(configService)
+
 	treeHandler := get_tree.NewHandler(cfg.RootDir)
 	docHandler := render_document.NewHandler(cfg.RootDir)
 	searchHandler := search_documents.NewHandler(cfg.RootDir)
 	watchHandler := watch_changes.NewHandler(cfg.Broadcaster)
 
 	// 2. API ルーティング設定
+	mux.Handle("/api/config", configHandler)
 	mux.Handle("/api/tree", treeHandler)
 	mux.Handle("/api/document", docHandler)
 	mux.Handle("/api/search", searchHandler)
