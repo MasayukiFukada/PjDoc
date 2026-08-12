@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	port := flag.Int("port", 8080, "Port to listen on")
+	port := flag.Int("port", 18080, "Port to listen on")
 	dir := flag.String("dir", ".", "Root directory to serve Markdown files from")
 	openBrowser := flag.Bool("open", true, "Automatically open browser")
 	plantumlServer := flag.String("plantuml-server", "https://kroki.io", "PlantUML / Kroki server URL endpoint for diagram rendering")

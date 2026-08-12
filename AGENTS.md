@@ -9,7 +9,7 @@
 - **目的**: ローカルリポジトリ内の Markdown ドキュメント構造を視覚化し、検索・閲覧・リアルタイムプレビューを提供する軽量 Web ツール。
 - **技術スタック**:
   - **バックエンド**: Go 1.22+ (`net/http`, `embed`)
-  - **フロントエンド**: HTML5, Vanilla CSS, JavaScript (ES6+), Marked.js, Highlight.js, KaTeX, Mermaid.js
+  - **フロントエンド**: HTML5, Vanilla CSS, JavaScript (ES6+), Marked.js, Highlight.js, KaTeX, Mermaid.js, PlantUML.js (Kroki API)
   - **ツールチェーン**: [mise](https://mise.jdx.dev/) (`.mise.toml`) にて開発環境のバージョンを管理
   - **アーキテクチャ**: Vertical Slice Architecture (VSA / Feature-First)
 

@@ -18,10 +18,11 @@ PjDoc/
 │       └── main.go             # CLI エントリーポイント・フラグ解析
 ├── internal/
 │   ├── features/               # Vertical Slices（機能ごとの独立ディレクトリ）
-│   │   ├── get_tree/           # 機能1: ドキュメントツリー構築 (tree.go, handler.go, tree_test.go)
-│   │   ├── render_document/    # 機能2: Markdown 取得 (document.go, handler.go, document_test.go)
-│   │   ├── search_documents/   # 機能3: 全文・ファイル名検索 (search.go, handler.go, search_test.go)
-│   │   └── watch_changes/      # 機能4: ホットリロード通知 (watcher.go, handler.go, watcher_test.go)
+│   │   ├── get_config/         # 機能1: クライアント設定提供 (config.go, handler.go, config_test.go)
+│   │   ├── get_tree/           # 機能2: ドキュメントツリー構築 (tree.go, handler.go, tree_test.go)
+│   │   ├── render_document/    # 機能3: Markdown 取得 (document.go, handler.go, document_test.go)
+│   │   ├── search_documents/   # 機能4: 全文・ファイル名検索 (search.go, handler.go, search_test.go)
+│   │   └── watch_changes/      # 機能5: ホットリロード通知 (watcher.go, handler.go, watcher_test.go)
 │   └── shared/                 # スライス間で共有する最小限の基盤機能
 │       └── web/                # embedded Webアセットおよび HTTP ルーティング初期化
 ├── scripts/
@@ -71,7 +72,7 @@ mise install
 go run ./cmd/pjdoc
 
 # ポート番号や対象ディレクトリを指定して起動
-go run ./cmd/pjdoc -port 8080 -dir ./docs
+go run ./cmd/pjdoc -port 19000 -dir ./docs
 
 # 自前の PlantUML / Kroki ローカルサーバーを指定して起動
 go run ./cmd/pjdoc -plantuml-server http://localhost:8000
