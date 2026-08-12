@@ -12,19 +12,19 @@ import (
 	"github.com/MasayukiFukada/PjDoc/internal/features/watch_changes"
 )
 
-// EmbeddedAssets には `web/` 内の全フロントエンドファイルを埋め込みますわ。
+// EmbeddedAssets には `web/` 内の全フロントエンドファイルを埋め込みます。
 //
 //go:embed all:assets
 var EmbeddedAssets embed.FS
 
-// ServerConfig は Web サーバー構築の基本設定構造体でございます。
+// ServerConfig は Web サーバー構築の基本設定構造体です。
 type ServerConfig struct {
 	RootDir     string
 	Port        int
 	Broadcaster *watch_changes.Broadcaster
 }
 
-// NewServer は各 Vertical Slice のハンドラーをルーティングした HTTP サーバーを組み立てますの。
+// NewServer は各 Vertical Slice のハンドラーをルーティングした HTTP サーバーを組み立てます。
 func NewServer(cfg ServerConfig, assetsFS embed.FS) (*http.ServeMux, error) {
 	mux := http.NewServeMux()
 

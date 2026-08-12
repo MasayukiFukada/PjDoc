@@ -5,12 +5,12 @@ import (
 	"net/http"
 )
 
-// Handler はディレクトリツリー取得リクエストを処理する HTTP ハンドラーでございます。
+// Handler はディレクトリツリー取得リクエストを処理する HTTP ハンドラーです。
 type Handler struct {
 	RootDir string
 }
 
-// NewHandler は Handler のインスタンスを生成いたしますわ。
+// NewHandler は Handler のインスタンスを生成します。
 func NewHandler(rootDir string) *Handler {
 	return &Handler{RootDir: rootDir}
 }

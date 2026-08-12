@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Node はディレクトリツリーの各要素を表す構造体でございます。
+// Node はディレクトリツリーの各要素を表す構造体です。
 type Node struct {
 	Name     string  `json:"name"`
 	Path     string  `json:"path"`
@@ -15,7 +15,7 @@ type Node struct {
 	Children []*Node `json:"children,omitempty"`
 }
 
-// BuildTree は指定されたルートディレクトリから Markdown ファイルを含むツリーを構築いたします。
+// BuildTree は指定されたルートディレクトリから Markdown ファイルを含むツリーを構築します。
 func BuildTree(rootDir string) (*Node, error) {
 	absRoot, err := filepath.Abs(rootDir)
 	if err != nil {
@@ -48,7 +48,7 @@ func buildSubTree(absBase, relPath string, parent *Node) error {
 	for _, entry := range entries {
 		name := entry.Name()
 
-		// .git などの隠しディレクトリや指定除外フォルダをスキップいたしますわ
+		// .git などの隠しディレクトリや指定除外フォルダをスキップします
 		if strings.HasPrefix(name, ".") || name == "node_modules" || name == "vendor" {
 			continue
 		}
@@ -64,7 +64,7 @@ func buildSubTree(absBase, relPath string, parent *Node) error {
 			if err != nil {
 				return err
 			}
-			// 子要素に Markdown ファイルが含まれるディレクトリのみ保持いたします
+			// 子要素に Markdown ファイルが含まれるディレクトリのみ保持します
 			if len(dirNode.Children) > 0 {
 				children = append(children, dirNode)
 			}
@@ -79,7 +79,7 @@ func buildSubTree(absBase, relPath string, parent *Node) error {
 		}
 	}
 
-	// ディレクトリ優先・五十音順ソートで美しく並べますの
+	// ディレクトリ優先・アルファベット順でソートします
 	sort.Slice(children, func(i, j int) bool {
 		if children[i].IsDir != children[j].IsDir {
 			return children[i].IsDir

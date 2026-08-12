@@ -30,16 +30,25 @@ func TestReadDocument_Success(t *testing.T) {
 	}
 }
 
+func TestReadDocument_DirectoryAsFile(t *testing.T) {
+	tempDir := t.TempDir()
+	subDir := filepath.Join(tempDir, "sub_dir")
+	_ = os.Mkdir(subDir, 0755)
+
+	_, err := render_document.ReadDocument(tempDir, "sub_dir")
+	if err != render_document.ErrInvalidPath {
+		t.Errorf("Expected ErrInvalidPath when trying to read directory, got %v", err)
+	}
+}
+
 func TestReadDocument_SecurityPathTraversal(t *testing.T) {
 	tempDir := t.TempDir()
 
-	// ルート外へのアクセストラバーストライ
 	_, err := render_document.ReadDocument(tempDir, "../secret.txt")
 	if err == nil {
 		t.Fatal("Expected error for path traversal attempt, got nil")
 	}
 
-	// 絶対パス指定のトライ
 	_, err = render_document.ReadDocument(tempDir, "/etc/passwd")
 	if err == nil {
 		t.Fatal("Expected error for absolute path attempt, got nil")
@@ -53,7 +62,7 @@ func TestHandler(t *testing.T) {
 
 	handler := render_document.NewHandler(tempDir)
 
-	// 正常系
+	// 1. 正常系
 	req := httptest.NewRequest(http.MethodGet, "/api/document?path=doc.md", nil)
 	rec := httptest.NewRecorder()
 	handler.ServeHTTP(rec, req)
@@ -71,12 +80,39 @@ func TestHandler(t *testing.T) {
 		t.Errorf("Expected Content, got %s", doc.Content)
 	}
 
-	// 404 Not Found ケース
+	// 2. 404 Not Found ケース
 	reqNotFound := httptest.NewRequest(http.MethodGet, "/api/document?path=missing.md", nil)
 	recNotFound := httptest.NewRecorder()
 	handler.ServeHTTP(recNotFound, reqNotFound)
 
 	if recNotFound.Code != http.StatusNotFound {
 		t.Errorf("Expected HTTP 404, got %d", recNotFound.Code)
+	}
+
+	// 3. 400 Bad Request (クエリ欠落) ケース
+	reqMissing := httptest.NewRequest(http.MethodGet, "/api/document", nil)
+	recMissing := httptest.NewRecorder()
+	handler.ServeHTTP(recMissing, reqMissing)
+
+	if recMissing.Code != http.StatusBadRequest {
+		t.Errorf("Expected HTTP 400 Bad Request for missing path, got %d", recMissing.Code)
+	}
+
+	// 4. 400 Bad Request (不正パス) ケース
+	reqInvalid := httptest.NewRequest(http.MethodGet, "/api/document?path=../secret.txt", nil)
+	recInvalid := httptest.NewRecorder()
+	handler.ServeHTTP(recInvalid, reqInvalid)
+
+	if recInvalid.Code != http.StatusBadRequest {
+		t.Errorf("Expected HTTP 400 Bad Request for invalid path, got %d", recInvalid.Code)
+	}
+
+	// 5. 405 Method Not Allowed ケース
+	reqPost := httptest.NewRequest(http.MethodPost, "/api/document?path=doc.md", nil)
+	recPost := httptest.NewRecorder()
+	handler.ServeHTTP(recPost, reqPost)
+
+	if recPost.Code != http.StatusMethodNotAllowed {
+		t.Errorf("Expected HTTP 405 Method Not Allowed, got %d", recPost.Code)
 	}
 }

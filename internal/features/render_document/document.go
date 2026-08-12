@@ -12,17 +12,17 @@ var (
 	ErrNotFound    = errors.New("file not found")
 )
 
-// Document は読み込んだドキュメントの情報を格納する構造体でございます。
+// Document は読み込んだドキュメントの情報を格納する構造体です。
 type Document struct {
 	Path    string `json:"path"`
 	Content string `json:"content"`
 }
 
-// ReadDocument は指定された相対パスの Markdown ファイルを安全に読み込みますの。
+// ReadDocument は指定された相対パスの Markdown ファイルを安全に読み込みます。
 func ReadDocument(rootDir, relPath string) (*Document, error) {
 	cleanRelPath := filepath.Clean(relPath)
 
-	// ディレクトリトラバーサルの攻撃を厳重に防ぎますわ
+	// ディレクトリトラバーサル攻撃を検証・防ぎます
 	if strings.HasPrefix(cleanRelPath, "..") || filepath.IsAbs(cleanRelPath) {
 		return nil, ErrInvalidPath
 	}

@@ -5,12 +5,12 @@ import (
 	"net/http"
 )
 
-// Handler は SSE 接続を受け取る HTTP ハンドラーでございます。
+// Handler は SSE 接続を受け取る HTTP ハンドラーです。
 type Handler struct {
 	Broadcaster *Broadcaster
 }
 
-// NewHandler は Handler のインスタンスを返却いたしますわ。
+// NewHandler は Handler のインスタンスを生成します。
 func NewHandler(b *Broadcaster) *Handler {
 	return &Handler{Broadcaster: b}
 }

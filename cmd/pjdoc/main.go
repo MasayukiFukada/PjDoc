@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"runtime"
@@ -29,7 +30,7 @@ func main() {
 
 	broadcaster := watch_changes.NewBroadcaster()
 
-	// 定期的にファイルの更新時刻を走査して変更検知 (Hot Reload) を行いますわ
+	// 定期的にファイルの更新時刻を走査して変更検知 (Hot Reload) を行います
 	go watchFileChanges(absDir, broadcaster)
 
 	cfg := sharedweb.ServerConfig{
@@ -63,7 +64,7 @@ func main() {
 		}
 	}()
 
-	// グレースフルシャットダウン処理でございます
+	// シグナルハンドリングによるグレースフルシャットダウン処理
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit
@@ -101,20 +102,13 @@ func openURL(url string) {
 	var err error
 	switch runtime.GOOS {
 	case "linux":
-		err = execCommand("xdg-open", url)
+		err = exec.Command("xdg-open", url).Start()
 	case "windows":
-		err = execCommand("rundll32", "url.dll,FileProtocolHandler", url)
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
 	case "darwin":
-		err = execCommand("open", url)
+		err = exec.Command("open", url).Start()
 	}
 	if err != nil {
 		fmt.Printf("Failed to automatically open browser: %v\n", err)
 	}
-}
-
-func execCommand(name string, args ...string) error {
-	// os/exec コマンド起動
-	cmd := os.Getenv("SHELL")
-	_ = cmd
-	return nil
 }

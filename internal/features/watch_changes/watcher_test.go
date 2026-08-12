@@ -2,6 +2,7 @@ package watch_changes_test
 
 import (
 	"context"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
@@ -49,5 +50,25 @@ func TestHandler(t *testing.T) {
 	expected := "data: reload\n\n"
 	if output != expected {
 		t.Errorf("Expected body %q, got %q", expected, output)
+	}
+}
+
+// 非Flusherのレスポンスライター構造体
+type nonFlusherResponseWriter struct {
+	http.ResponseWriter
+}
+
+func TestHandler_NonFlusher(t *testing.T) {
+	b := watch_changes.NewBroadcaster()
+	handler := watch_changes.NewHandler(b)
+
+	req := httptest.NewRequest("GET", "/api/events", nil)
+	rec := httptest.NewRecorder()
+	wrappedRec := &nonFlusherResponseWriter{ResponseWriter: rec}
+
+	handler.ServeHTTP(wrappedRec, req)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Errorf("Expected HTTP 500 Internal Server Error when Flusher unsupported, got %d", rec.Code)
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// MatchResult は検索のヒット情報を美しく格納する構造体でございます。
+// MatchResult は検索のヒット情報を格納する構造体です。
 type MatchResult struct {
 	Path       string `json:"path"`
 	FileName   string `json:"fileName"`
@@ -16,7 +16,7 @@ type MatchResult struct {
 	IsTitle    bool   `json:"isTitle,omitempty"`
 }
 
-// SearchDocuments は指定ディレクトリ配下の Markdown からキーワードに一致する箇所を探し出しますの。
+// SearchDocuments は指定ディレクトリ配下の Markdown からキーワードに一致する箇所を探索します。
 func SearchDocuments(rootDir, query string) ([]*MatchResult, error) {
 	if strings.TrimSpace(query) == "" {
 		return []*MatchResult{}, nil

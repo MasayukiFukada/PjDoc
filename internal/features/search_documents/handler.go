@@ -5,12 +5,12 @@ import (
 	"net/http"
 )
 
-// Handler は全文検索リクエストを処理する HTTP ハンドラーでございます。
+// Handler は全文検索リクエストを処理する HTTP ハンドラーです。
 type Handler struct {
 	RootDir string
 }
 
-// NewHandler は Handler インスタンスを返却いたしますわ。
+// NewHandler は Handler のインスタンスを生成します。
 func NewHandler(rootDir string) *Handler {
 	return &Handler{RootDir: rootDir}
 }

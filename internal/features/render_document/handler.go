@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-// Handler は Markdown ファイル読み込みリクエストを安全に処理する HTTP ハンドラーでございます。
+// Handler は Markdown ファイル読み込みリクエストを安全に処理する HTTP ハンドラーです。
 type Handler struct {
 	RootDir string
 }
 
-// NewHandler は Handler のインスタンスを生成いたしますわ。
+// NewHandler は Handler のインスタンスを生成します。
 func NewHandler(rootDir string) *Handler {
 	return &Handler{RootDir: rootDir}
 }
