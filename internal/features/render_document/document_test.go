@@ -53,6 +53,34 @@ func TestReadDocument_SecurityPathTraversal(t *testing.T) {
 	if err == nil {
 		t.Fatal("Expected error for absolute path attempt, got nil")
 	}
+
+	// 外部を指すシンボリックリンクによるトラバーサル攻撃テスト
+	outsideDir := t.TempDir()
+	outsideFile := filepath.Join(outsideDir, "secret.txt")
+	_ = os.WriteFile(outsideFile, []byte("sensitive-secret-token"), 0644)
+
+	maliciousSymlink := filepath.Join(tempDir, "evil_symlink.md")
+	if err := os.Symlink(outsideFile, maliciousSymlink); err == nil {
+		_, err = render_document.ReadDocument(tempDir, "evil_symlink.md")
+		if err != render_document.ErrInvalidPath {
+			t.Fatalf("Expected ErrInvalidPath for external symlink attack, got %v", err)
+		}
+	}
+
+	// 内部ファイルを指す正常なシンボリックリンクの動作テスト
+	validFile := filepath.Join(tempDir, "valid.md")
+	_ = os.WriteFile(validFile, []byte("Valid content"), 0644)
+
+	validSymlink := filepath.Join(tempDir, "valid_symlink.md")
+	if err := os.Symlink(validFile, validSymlink); err == nil {
+		doc, err := render_document.ReadDocument(tempDir, "valid_symlink.md")
+		if err != nil {
+			t.Fatalf("Expected successful read for internal symlink, got %v", err)
+		}
+		if doc.Content != "Valid content" {
+			t.Errorf("Expected 'Valid content', got %q", doc.Content)
+		}
+	}
 }
 
 func TestHandler(t *testing.T) {

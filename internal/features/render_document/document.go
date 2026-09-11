@@ -37,11 +37,28 @@ func ReadDocument(rootDir, relPath string) (*Document, error) {
 		return nil, err
 	}
 
-	if !strings.HasPrefix(absFullPath, absRootDir) {
+	// ルートディレクトリのシンボリックリンクを解決
+	evalRootDir, err := filepath.EvalSymlinks(absRootDir)
+	if err != nil {
+		return nil, err
+	}
+
+	// 対象ファイルのシンボリックリンクを解決して存在確認
+	evalFullPath, err := filepath.EvalSymlinks(absFullPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	// 解決後の実パスがルートディレクトリ配下に収まっているかを検証 (シンボリックリンク悪用防止)
+	relToRoot, err := filepath.Rel(evalRootDir, evalFullPath)
+	if err != nil || strings.HasPrefix(relToRoot, "..") || filepath.IsAbs(relToRoot) {
 		return nil, ErrInvalidPath
 	}
 
-	info, err := os.Stat(absFullPath)
+	info, err := os.Stat(evalFullPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, ErrNotFound
@@ -53,7 +70,7 @@ func ReadDocument(rootDir, relPath string) (*Document, error) {
 		return nil, ErrInvalidPath
 	}
 
-	data, err := os.ReadFile(absFullPath)
+	data, err := os.ReadFile(evalFullPath)
 	if err != nil {
 		return nil, err
 	}
